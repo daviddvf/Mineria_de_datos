@@ -1,0 +1,23 @@
+El modelo explica 53 % de la variabilidad en las lesiones totales (inj_total). 
+Es un ajuste moderado, lo que indica que las variables sí tienen relacion con las lesiones.
+Sin embargo, hay otros aspectos que podrian estar afectando las lesiones y que no se consideraron en este analisis.
+
+Variables:
+
+vis_sm (-0.018) = A menor visibilidad, se asocian mas lesiones. Aunque el efecto es leve, lo cual tiene sentido: una visibilidad reducida incrementa el riesgo.
+
+wind_vel_kts (0.094) = A mayor velocidad del viento, se predicen mss lesiones. Hay una relacion positiva clara con el riesgo.
+
+wx_temp (0.007) = La temperatura casi no tiene impacto, el coeficiente es muy pequeño.
+
+num_eng (2.36) = Mas motores implican mas lesiones potenciales. Esto refleja que los aviones mas grandes (con mas motores) transportan a mas personas.
+
+total_seats (0.58) = A mayor capacidad del avion, se esperan mas lesiones(lo cual tiene sentido: aviones mas grandes implican potencialmente mas personas lesionadas en un accidente). Este es el factor con mayor peso directo despues de num_eng.
+
+acft_year (0.0096) = Los aviones más nuevos tienden a tener ligeramente mas lesiones, aunque el efecto es minimo.
+
+Conclusion:
+
+El modelo presenta un ajuste medio (R2 = 0.53). Las variables mas influyentes son el numero de motores y el tamaño del avion,
+seguidas por la visibilidad y la velocidad del viento, lo que indica que tanto las condiciones de vuelo como el tipo de aeronave afectan la gravedad de los accidentes.
+
