@@ -1,0 +1,10 @@
+El modelo mostro un desempeño bueno en general, alcanzando una precision global del 97.5%. 
+Predijo correctamente casi todos los casos del tipo ACC, aunque tuvo mas dificultades con los casos INC, donde acerto en menos de la mitad.
+
+En la figura se puede ver que la mayoria de los eventos suceden bajo condiciones de luz diurna (DAYL). 
+Dentro de esta categoria, los accidentes (ACC) son mucho mas comunes que los incidentes (INC).
+Ademas, los accidentes suelen estar relacionados con niveles de daño leve (SUBS) y destrucción total (DEST), 
+mientras que los incidentes tienden a concentrarse mas en daños menores (MINR).
+
+En condiciones nocturnas (NITE o NDRK), el total de registros es menor, pero las proporciones se mantienen: 
+los accidentes siguen siendo mas frecuentes que los incidentes.
