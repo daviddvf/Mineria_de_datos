@@ -1,0 +1,16 @@
+Centroides finales:
+
+ latitude   longitude  cluster
+40.631033 -126.146944        0
+23.772463   -3.969064        1
+ 2.806223  -92.969756        2
+36.392244  -87.113251        3
+
+
+Tamaño por cluster:
+
+cluster
+0    4061
+1    9510
+2    4943
+3    7443
