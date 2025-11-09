@@ -1,4 +1,6 @@
 # mdb_to_csv.py
+import re
+
 import numpy as np
 from pathlib import Path
 
@@ -35,7 +37,7 @@ def dbToCsvs():
         except Exception as e:
             print("Error exportando: ", table, ":", e)
 
-dbToCsvs()
+#dbToCsvs()
 
 # directorio del los csv generados
 CSV_Dir = base_dir/"csv_out"
@@ -159,27 +161,61 @@ def clean_latitude(val):
     if pd.isna(val):
         return np.nan
     val = str(val).strip().upper()
-    if val.endswith("N"):
-        return float(val[:-1])   # norte positivo
-    elif val.endswith("S"):
-        return -float(val[:-1])  # sur negativo
+
+    # Detectar hemisferio
+    sign = 1
+    if val.endswith("S"):
+        sign = -1
+        val = val[:-1]
+    elif val.endswith("N"):
+        val = val[:-1]
+
+    # Detectar formato DMS (ej. 049130)
+    if re.fullmatch(r"\d{6}", val):
+        deg = int(val[:2])
+        minutes = int(val[2:4])
+        seconds = int(val[4:6])
+        decimal = deg + minutes/60 + seconds/3600
+        return sign * decimal
     else:
-        return float(val)
+        # Decimal normal
+        try:
+            return sign * float(val)
+        except ValueError:
+            return np.nan
+
 
 def clean_longitude(val):
     if pd.isna(val):
         return np.nan
     val = str(val).strip().upper()
-    if val.endswith("E"):
-        return float(val[:-1])   # este positivo
-    elif val.endswith("W"):
-        return -float(val[:-1])  # oeste negativo
+
+    sign = 1
+    if val.endswith("W"):
+        sign = -1
+        val = val[:-1]
+    elif val.endswith("E"):
+        val = val[:-1]
+
+    # Detectar formato DMS (ej. 0122412)
+    if re.fullmatch(r"\d{7}", val):
+        deg = int(val[:3])
+        minutes = int(val[3:5])
+        seconds = int(val[5:7])
+        decimal = deg + minutes/60 + seconds/3600
+        return sign * decimal
     else:
-        return float(val)
+        try:
+            return sign * float(val)
+        except ValueError:
+            return np.nan
 
 # limpieza de latitude y longitude
 events_post1980["latitude"] = events_post1980["latitude"].apply(clean_latitude)
 events_post1980["longitude"] = events_post1980["longitude"].apply(clean_longitude)
+# Eliminar filas con coordenadas fuera de rango
+events_post1980 = events_post1980[(events_post1980['latitude'].between(-90, 90)) & (events_post1980['longitude'].between(-180, 180))].reset_index(drop=True)
+
 # Si latitude o longuitude son nulos se eliminan
 events_post1980 = events_post1980.dropna(subset=["latitude", "longitude"])
 
@@ -277,6 +313,19 @@ if aircraft_agg is not None:
 if injury_agg is not None:
     master = master.merge(injury_agg, on="ev_id", how="left")
 
+# ---------- cargar y unir narratives.csv ------------
+narratives = CSV_Dir / "narratives.csv"
+
+narr = pd.read_csv(narratives, low_memory=False)
+
+narr["ev_id"] = narr["ev_id"].astype(str)
+narr["narr_cause"] = narr["narr_cause"].fillna("missing")
+
+# unir con master por ev_id
+master = master.merge(narr[["ev_id", "narr_cause"]], on="ev_id", how="left")
+
+master["narr_cause"] = master["narr_cause"].fillna("missing")
+
 # Si inj_total es null, se imputa con 0
 if "inj_total" in master.columns:
     master["inj_total"] = master["inj_total"].fillna(0).astype(int)
@@ -334,6 +383,19 @@ def imputar_acft_year(row, mediana_global):
 
 master["acft_year"] = master.apply(lambda row: imputar_acft_year(row, mediana_global), axis=1)
 
+# Filtrar valores incongruentes
+
+# Visibilidad: filtrar >100 millas
+master = master[master['vis_sm'] <= 100]
+
+# Total seats: filtrar >600 asientos
+master = master[master['total_seats'] <= 600]
+
+# Wind velocity: filtrar >100 nudos
+master = master[master['wind_vel_kts'] <= 120]
+
+# wx temp: filtrar > 100
+master = master[master['wx_temp'] <= 100]
 
 # veriables seleccionadas para la creacion del csv final
 final_cols = [
@@ -343,7 +405,9 @@ final_cols = [
     # aircraft
     "regis_no","acft_make","acft_model","damage","num_eng","acft_year","total_seats","oper_name",
     # injury
-    "inj_total"
+    "inj_total",
+    # narratives
+    "narr_cause"
 ]
 # nos quedamos con los columnas existentes
 final_keep = [c for c in final_cols if c in master.columns]
