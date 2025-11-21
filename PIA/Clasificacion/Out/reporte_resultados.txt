@@ -1,0 +1,18 @@
+Accuracy: 0.9749
+Reporte de clasificacion (por etiquetas codificadas):
+              precision    recall  f1-score   support
+
+           0       0.98      0.99      0.99      6306
+           1       0.72      0.44      0.55       225
+
+    accuracy                           0.97      6531
+   macro avg       0.85      0.72      0.77      6531
+weighted avg       0.97      0.97      0.97      6531
+
+Matriz de confusion (filas=verdadero, columnas=predicho):
+[[6267   39]
+ [ 125  100]]
+
+Mapping de codigos a etiquetas (target):
+  0 -> ACC
+  1 -> INC

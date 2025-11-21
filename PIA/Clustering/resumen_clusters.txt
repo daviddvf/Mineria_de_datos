@@ -1,0 +1,16 @@
+Centroides finales:
+
+ latitude   longitude  aircraft_age  cluster
+39.611376   -8.042658     32.400288        0
+24.531027  -90.283335     22.963222        1
+32.879083 -113.116118     51.506701        2
+ 1.656389    0.067172     31.609657        3
+
+
+Tamaño por cluster:
+
+cluster
+0     5561
+1    10369
+2     6204
+3     4204

@@ -1,0 +1,4 @@
+Tras aplicar Kruskal–Wallis se encontraron diferencias entre ACC y INC en las variables: 
+wind_vel_kts, wx_temp, latitude, longitude, num_eng, acft_year, total_seats, inj_total e inj_tot_t.
+Sin embargo, al considerar el tamaño del efecto, solo num_eng y total_seats muestran efectos de magnitud practica notable,
+muchas variables tienen efectos muy pequeños a pesar de p-values significativos.
